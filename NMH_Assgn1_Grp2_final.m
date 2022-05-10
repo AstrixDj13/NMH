@@ -87,6 +87,8 @@ for exp = 1:1:6
     subplot(3,2,exp)
     plot(x,dfn_up,x, dfn_down,x, dfn_central, x, dfe )
     legend('Upwind','Downwind','Central','Exact','Location','SouthEast')
+    xlabel('x');
+    ylabel('amplitude');
     set(gca,'FontSize',14);
     title(n);
     pause(1);
@@ -99,6 +101,8 @@ for exp = 1:1:6
     subplot(3,2,exp)
     plot(x,dffn_central, x, dffe )
     legend('Central', 'Exact' ,'Location','SouthEast')
+    xlabel('x');
+    ylabel('amplitude');
     set(gca,'FontSize',14); 
     title(n);
     pause(1);
@@ -111,6 +115,8 @@ for exp = 1:1:6
     subplot(3,2,exp)
     plot(x,interpol, x, f )
     legend('Linear Interpolation', 'Exact' ,'Location','SouthEast')
+    xlabel('x');
+    ylabel('amplitude');
     set(gca,'FontSize',14); 
     title(n);
     pause(1);
