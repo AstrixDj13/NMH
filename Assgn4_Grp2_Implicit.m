@@ -32,7 +32,9 @@
 %
 % Clear all variables and plots.
 format long;
-clear;
+clear all;
+close all;
+clc;
 hold off;
 
 % Set convection velocity
@@ -40,7 +42,7 @@ U0 = 1.0;
 
 % Discrete spacing in space
 xend   = 2.0 * pi;
-points = 100; 
+points = 40; 
 dx     = xend / ( points - 1 );
 % Grid with x locations:
 x = 0.0 : dx : xend;
@@ -63,7 +65,7 @@ phi = zeros(points,1);
 for j = 1 : points
    phi(j) = sin(x(j));
 end
-
+phi_time(1,:)=phi;
 % Check initial field:
 plot(x, phi, 'r');
 hold on;
@@ -104,6 +106,7 @@ for i = 1 : tsteps
 
   % Solve the linear system of equations
   phi = A\b;
+  phi_time(i+1,:)=phi;
 
   % Analytical solution
    t=i*dt;
@@ -113,9 +116,40 @@ for i = 1 : tsteps
   end
 
   % Plot transported wave for each timestep
+  fg1=figure(1);
   plot(x, phi, 'r', x, phi_a, 'g');
   hold off;
-  pause(0.01);
+  pause(0.001);
 
 end
+close(fg1)
+%% Saving Plots
 
+prompt = "Type the number of time steps to save the figure [0-1000]? Type it comma separated";
+dlgtitle = 'Save';
+dims = [1 50];
+definput = {''};
+answer = inputdlg(prompt,dlgtitle,dims,definput);
+time= str2double(split(answer{1},','));
+
+if answer ==""
+    disp("Not plots will be saved")
+else
+
+    for i=1:length(time)
+        if time(i) >1000 || time(i)<0
+            disp("You entered a wrong time step")
+            break;
+        else
+            phi_analytical = sin(x-U0*dt*time(i));
+            figure()
+            plot(x,phi_time(time(i)+1,:),'r',x,phi_analytical,'g');
+            legend('Numerical solution','Analytical solution','Location','Southeast');
+            title_str = "Implicit Euler, Time = " + time(i)*dt + " ,dt = " + dt + " ,Points = " + points;
+            title(title_str);
+            save_str = "Implicit Euler at Time " + time(i)*dt;
+            print('-djpeg',save_str,'-r250');
+        end
+
+    end
+end
