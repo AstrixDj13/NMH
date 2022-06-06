@@ -37,6 +37,8 @@ close all;
 clc
 hold off;
 
+%% Setting up the simulation
+
 % Set convection velocity
 U0 = 1.0;
 
@@ -54,6 +56,7 @@ tsteps = 1000;
 dt     = 0.1;
 tend   = dt * tsteps;
 
+%CFL Number
 CFL = U0*dt/dx
 
 % Initialise the solution (initial condition)
@@ -61,12 +64,16 @@ CFL = U0*dt/dx
 for j = 1 : points
    phi(j) = sin(x(j));
 end
+
+%Store phi for every in time step in phi_time
 phi_time(1,:)=phi;
+
 % Check initial field:
 plot(x, phi, 'r');
 hold on;
 pause(3);
 
+%% Calculation using explicit Euler
 % Explicit Euler:
 %----------------
 %
@@ -75,6 +82,7 @@ pause(3);
 Aw = U0*dt/(2*dx);
 Ap =1;
 Ae = -U0*dt/(2*dx);
+
 % Loop over timesteps:
 for i = 1 : tsteps
 
@@ -93,9 +101,11 @@ for i = 1 : tsteps
 
   % Write new field back to old field:
   phi = phinew;
+
+  %Add solution for this timestep to phi_new 
   phi_time(i+1,:)=phinew;
+
   % Analytical solution
-  
   for j = 1 : points
     t = i*dt;
     phi_a(j) = sin(x(j)-U0*t);
@@ -105,15 +115,16 @@ for i = 1 : tsteps
   % Plot transported wave for each timestep
   fg1= figure(1);
   plot(x, phi, 'r', x, phi_a, 'g');
-  %ylim([-2,2])
   hold off;
   pause(0.001);
-  %fprintf('%d\n',i)
+  
 end
+
+pause(2);
 close(fg1);
 %% Saving plots
 
-prompt = "Type the number of time steps to save the figure [0-1000]? Type it comma separated";
+prompt = ['Type comma separated the number of time steps for which to save the figure. Range [0-' num2str(tsteps) ']'];
 dlgtitle = 'Save';
 dims = [1 50];
 definput = {''};
@@ -125,17 +136,21 @@ if answer ==""
 else
 
     for i=1:length(time)
-        if time(i) >1000 || time(i)<0
+        if time(i) >tsteps || time(i)<0
             disp("You entered a wrong time step.")
             break;
         else
             phi_analytical = sin(x-U0*dt*time(i));
-            figure()
-            plot(x,phi_time(time(i)+1,:),'r',x,phi_analytical,'g');
+            fh=figure();
+            fh.WindowState = "maximized";
+            plot(x,phi_time(time(i)+1,:),'r',x,phi_analytical,'g','LineWidth',2);
+            set(gca, 'FontSize',15);
+            xlabel('x');
+            ylabel('\phi (x,t)');
             legend('Numerical solution','Analytical solution','Location','Southeast');
             title_str = "Explicit Euler, Time = " + time(i)*dt + " ,dt = " + dt + " ,Points = " + points;
             title(title_str);
-            save_str = "Explicit Euler at Time " + time(i)*dt;
+            save_str = "Explicit_Timestep_" + time(i);
             print('-djpeg',save_str,'-r250');
         end
 
