@@ -36,7 +36,7 @@ flow.h = lognrnd( log(h0^2/sqrt(h0^2+dh0^2)), sqrt(log(1+dh0^2/h0^2)), grid.nx+2
 %flow.h = h0 - flow.zb;
 
 % Constant Strickler
-kst = 10;
+kst = 30;
 flow.kst = kst *ones( grid.nx, grid.ny );
 
 % ---- Create boundary conditions -----------------------------------------

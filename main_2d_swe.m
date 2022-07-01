@@ -51,30 +51,33 @@ bconds.beast = {'WALL'};
 bconds.bsouth = {'WALL'};
 bconds.bnorth = {'WALL'};
 
+waterLevel = zeros(length(flow.h), length(flow.h));
 
 %% Time integration
 for itstep = 1:run.ntst
     [ run, flow ] = time_step_rk( itstep==1, constants, grid, run, ...
         flow, bconds );
  if mod(itstep,10) == 0
-
     height_max(itstep/10) = max(max(flow.h + flow.zb))
     height_min(itstep/10) = min(min(flow.h + flow.zb))
  end
 %% Plot results
-% TODO TODO TODO TODO TODO TODO TODO
-% figure(2)
-% surf(flow.h + flow.zb)
-% colorbar
-% xlabel("x")
-% ylabel("y")
-% zlabel("Water Level (h)")
+%TODO TODO TODO TODO TODO TODO TODO
+figure(3)
+surf(flow.h + flow.zb)
+colorbar
+xlabel("x")
+ylabel("y")
+zlabel("Water Level (h)")
+zlim([0.0 2.0])
 
 end
-figure(3)
+
+figure(5)
 plot(height_max)
 hold on
 plot(height_min)
-hold on
-plot(height_max - height_min)
+xlabel("time step")
+ylabel("min/max water level h of whole domain")
 hold off
+legend({'max h','min h'},'Location','northeast')
