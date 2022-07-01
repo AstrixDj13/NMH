@@ -35,7 +35,16 @@ surf(flow.h + flow.zb)
 colorbar
 xlabel("x")
 ylabel("y")
-zlabel("Water Level (h)")
+zlabel("Water Level h")
+
+figure(2)
+contourf(flow.h + flow.zb)
+a = colorbar;
+a.Label.String = "Water level h";
+xlabel("x")
+ylabel("y")
+zlabel("Water Level h")
+
 % Create boundary conditions
 bconds.bwest = {'WALL'};
 bconds.beast = {'WALL'};
@@ -63,7 +72,7 @@ for itstep = 1:run.ntst
 % zlabel("Water Level (h)")
 
 end
-figure(2)
+figure(3)
 plot(height_max)
 hold on
 plot(height_min)
