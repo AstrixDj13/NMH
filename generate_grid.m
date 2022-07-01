@@ -14,7 +14,7 @@ for i = 1:grid.nx
     grid.x(i+1) = grid.x(i) + grid.dx;
 end
 
-% Create coordinate arrays in x-direction
+% Create coordinate arrays in y-direction
 grid.y(1) = grid.ymin - grid.dy/2;
 grid.y(grid.ny+2) = grid.ymax + grid.dy/2;
 
