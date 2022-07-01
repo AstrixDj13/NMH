@@ -1,4 +1,0 @@
-u0	gamma	points	scheme
-1.0	1.0	5	upwind
-10.0	1.0	5	upwind
-1.0	1.0	51	central
