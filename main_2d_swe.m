@@ -56,7 +56,6 @@ bconds.bnorth = {'WALL'};
 for itstep = 1:run.ntst
     [ run, flow ] = time_step_rk( itstep==1, constants, grid, run, ...
         flow, bconds );
- %for itstep = 1:10:run.ntst
  if mod(itstep,10) == 0
 
     height_max(itstep/10) = max(max(flow.h + flow.zb))
