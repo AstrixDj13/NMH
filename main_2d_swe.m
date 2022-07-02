@@ -66,6 +66,7 @@ for itstep = 1:run.ntst
 figure(3)
 surf(flow.h + flow.zb)
 colorbar
+caxis([0.9 1])
 xlabel("x")
 ylabel("y")
 zlabel("Water Level (h)")
