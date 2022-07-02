@@ -6,8 +6,15 @@
 % author: H. Zeng & L. Unglehrt
 % June, 2020
 %**************************************************************************
+%% Set up directory for results
 clear;
 close all
+
+if ~exist('results', 'dir')
+       mkdir('results')
+    else
+        delete('results\*')
+ end
 
 %% Initialize simulation
 % read infile 
@@ -36,6 +43,7 @@ colorbar
 xlabel("x")
 ylabel("y")
 zlabel("Water Level h")
+print('-djpeg', 'results\initial_surface','-r250')
 
 figure(2)
 contourf(flow.h + flow.zb)
@@ -44,6 +52,7 @@ a.Label.String = "Water level h";
 xlabel("x")
 ylabel("y")
 zlabel("Water Level h")
+print('-djpeg', 'results\initial_contour','-r250')
 
 % Create boundary conditions
 bconds.bwest = {'WALL'};
@@ -53,24 +62,33 @@ bconds.bnorth = {'WALL'};
 
 waterLevel = zeros(length(flow.h), length(flow.h));
 
+
+ 
+
 %% Time integration
+count=10;
+
 for itstep = 1:run.ntst
     [ run, flow ] = time_step_rk( itstep==1, constants, grid, run, ...
         flow, bconds );
+
+% Plot results after 10th time step
  if mod(itstep,10) == 0
     height_max(itstep/10) = max(max(flow.h + flow.zb))
     height_min(itstep/10) = min(min(flow.h + flow.zb))
+    
+    figure(3)
+    surf(flow.h + flow.zb)
+    colorbar
+    caxis([0.9 1])
+    xlabel("x")
+    ylabel("y")
+    zlabel("Water Level (h)")
+    zlim([0.0 2.0])
+    print('-djpeg', 'results\timestep' + string(count),'-r250')
+    count= count+10;
+
  end
-%% Plot results
-%TODO TODO TODO TODO TODO TODO TODO
-figure(3)
-surf(flow.h + flow.zb)
-colorbar
-caxis([0.9 1])
-xlabel("x")
-ylabel("y")
-zlabel("Water Level (h)")
-zlim([0.0 2.0])
 
 end
 
@@ -82,3 +100,4 @@ xlabel("time step")
 ylabel("min/max water level h of whole domain")
 hold off
 legend({'max h','min h'},'Location','northeast')
+print('-djpeg', 'results\min_max_waterlevel','-r250')
