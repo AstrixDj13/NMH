@@ -1,0 +1,4 @@
+lake_at_rest:
+  stage: test
+  script:
+    - octave --no-window-system --jit-compiler test_1 test_1_lake_at_rest.m

@@ -1,0 +1,7 @@
+# MATLAB files
+*.m~
+
+# LaTeX files
+*.aux
+*.log
+*.synctex.gz
