@@ -20,7 +20,9 @@ constants = struct();
 constants.g = 9.81;
 constants.enable_entropy_fix = true;
 constants.NGHOST = 1;
-
+constants.I = 0.001;
+constants.kst = 30;
+constants.h = 1;
 % ---- Create initial conditions ------------------------------------------
 t = 0.0;
 
@@ -39,10 +41,10 @@ zb  = zeros( length(grid.x), length(grid.y) );
 kst = zeros( length(grid.x), length(grid.y) );
 
 % Set initial condition
-[ h, hu, hv, kst, zb ] = set_initial_condition( grid, h, hu, hv, kst, zb );
+[ h, hu, hv, kst, zb ] = set_initial_condition( grid, h, hu, hv, kst, zb, constants );
 
 % ---- Create boundary conditions -----------------------------------------
-bconds = set_boundary_conditions();
+bconds = set_boundary_conditions(constants);
 
 % ---- Computation --------------------------------------------------------
 % TODO: Number of time steps
@@ -54,6 +56,11 @@ dt = 0.01;
 % Frequency of diagnostic output
 itdiag = 1;
 
+% Initial location and time of wave
+x(1) = 10;
+t_a(1) = 0;
+a(1)=0;
+time = 0;
 %% Time integration
 for itstep = 1:mtstep
     % Reset time stepping function (because of persistent variables)
@@ -63,14 +70,37 @@ for itstep = 1:mtstep
     % Diagonostic output
     if mod(itstep, itdiag) == 0
         % CFL number
-        fprintf('%d : CFL number:         %e\n', itstep, ...
-            compute_CFL_number(constants, grid, dt, h, hu, hv));
+        [CFL, FR] = compute_CFL_number(constants, grid, dt, h, hu, hv);
+        fprintf('%d : CFL number:         %e     Froude number:         %e\n', itstep, ...
+            CFL, FR);
     end
     
     
     % Water surface
     zw = zb + h;
-  
+    
+    % Wave height
+    height(itstep)= max(zw(:,2))-min(zw(:,2));
+    % Midpoint
+    midpoint(itstep) = max(zw(:,2))-height(itstep)/2 ;
+    % Index of midpoint
+    k = find(zw(:,2)>=midpoint(itstep));
+    % Position on x-Axis of midpoint
+    x(itstep+1)= (k(1)-1)*grid.dx;
+    t_a(itstep+1)= itstep*dt;
+    if x(itstep+1)~=x(itstep)
+        dtime = t_a(itstep+1) - time;
+        time = t_a(itstep+1);
+        a(itstep+1)=(x(itstep+1)-x(itstep))/dtime;
+    else
+        a(itstep+1)=a(itstep);
+     
+    end
+    
+    c(itstep) = sqrt(constants.g*constants.h) *sqrt(1+3/2 *height(itstep)/constants.h + 1/2*(height(itstep)/constants.h)^2);
+
+
+    
     figure(1)
     plot(grid.x, h(:,2))
     xlabel('x')
@@ -99,4 +129,9 @@ for itstep = 1:mtstep
     drawnow
     
 end
-max = max(max(zw))
+
+figure(4)
+plot(height)
+xlabel('timestep')
+ylabel('relative wave height')
+title('Relative wave height')
