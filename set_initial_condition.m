@@ -3,7 +3,6 @@ function [ h, hu, hv, kst, zb ] = set_initial_condition( grid, h, hu, hv, kst, z
 
 % TODO: Bottom elevation
 zb = -constants.I * grid.x' * ones(size(grid.y));
-
 % TODO: Strickler coefficient
 kst = constants.kst *ones( grid.M+2, grid.N+2 );
 

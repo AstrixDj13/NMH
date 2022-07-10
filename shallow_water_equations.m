@@ -133,10 +133,10 @@ for j = grid.NGHOST+1:length(grid.y)-grid.NGHOST
 
         %% Volume, convective and pressure fluxes
         % TODO: Comment in the following code for exercise 8
-%         lambda_abs_e = 0;
-%         lambda_abs_w = 0;
-%         lambda_abs_n = 0;
-%         lambda_abs_s = 0;
+         %lambda_abs_e = 0;
+         %lambda_abs_w = 0;
+         %lambda_abs_n = 0;
+         %lambda_abs_s = 0;
         %   You can see from the code below that the fluxes are then
         %   computed using a central-difference approximation instead of
         %   the Upwind scheme.
