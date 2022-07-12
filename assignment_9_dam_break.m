@@ -9,6 +9,15 @@
 
 % This test case checks whether the transition from subcritical to
 % supercritical flow is represented correctly.
+clc
+close all
+clear all
+
+if ~exist('results', 'dir')
+       mkdir('results')
+    else
+        delete('results\*')
+ end
 
 if is_octave()
     % ---- Load packages ----------------------------------------------------
@@ -57,7 +66,24 @@ mtstep = 400;
 dt = 0.005;
 
 % Frequency of diagnostic output
-itdiag = 10;
+itdiag = 5;
+
+% Initial state
+Fr = 0;
+u=0;
+e = h(2:end-1,2);
+figure(1)
+plot(grid.x(2:end-1), h(2:end-1,2),'b',grid.x(2:end-1), e,'r',grid.x(2:end-1), Fr,'--k',grid.x(2:end-1),u.^2./(2*constants.g),'--c',grid.x(2:end-1),zb(2:end-1,2),'k')
+xlabel('x')
+ylabel('h, H, Fr, u^2/2g, zb')
+legend('Flow depth h', 'Energy Head H', 'Froude number Fr', 'velocity head u^2/2g', 'bottom elevation zb')
+title(sprintf('At time t=%g', t))
+ylim([-0.2,1.5])
+print('-djpeg','results\Time_0','-r250')
+pause(3)
+
+count=1;
+
 
 %% Time integration
 % Reset time stepping function (because of persistent variables)
@@ -87,40 +113,54 @@ for itstep = 1:mtstep
         Fr = u./sqrt(constants.g * h(2:end-1,2));
         
 
-        % Water surface
-        figure(1)
-        plot(grid.x(2:end-1), h(2:end-1,2))
-        xlabel('x')
-        ylabel('h')
-        title(sprintf('Flow depth at t=%g',t))
-        ylim([0,1.1])
-        drawnow
+%         % Water surface
+%         figure(1)
+%         plot(grid.x(2:end-1), h(2:end-1,2))
+%         xlabel('x')
+%         ylabel('h')
+%         title(sprintf('Flow depth at t=%g',t))
+%         ylim([0,1.1])
+%         drawnow
+% 
+%         % Specific discharge
+%         figure(2)
+%         plot(grid.x(2:end-1), hu(2:end-1,2), 'r')
+%         xlabel('x')
+%         ylabel('hu')
+%         title(sprintf('Specific discharge at t=%g',t))
+%         ylim([0,1.1])
+%         drawnow
+% 
+%         % TODO: Plot energy head, Froude number
+%         figure(3)
+%         plot(grid.x(2:end-1), e)
+%         xlabel('x')
+%         ylabel('Energy Head')
+%         title(sprintf('Energy Head at t=%g',t))
+%         ylim([0,1])
+%         drawnow
+% 
+%         figure(4)
+%         plot(grid.x(2:end-1), Fr)
+%         xlabel('x')
+%         ylabel('Fr')
+%         title(sprintf('Froude number at t=%g',t))
+%         %ylim([0,1])
+%         drawnow
 
-        % Specific discharge
-        figure(2)
-        plot(grid.x(2:end-1), hu(2:end-1,2), 'r')
+        figure(1);
+        plot(grid.x(2:end-1), h(2:end-1,2),'b',grid.x(2:end-1), e,'r',grid.x(2:end-1), Fr,'--k',grid.x(2:end-1),u.^2./(2*constants.g),'--c',grid.x(2:end-1),zb(2:end-1,2),'k')
         xlabel('x')
-        ylabel('hu')
-        title(sprintf('Specific discharge at t=%g',t))
-        ylim([0,1.1])
-        drawnow
+        ylabel('h, H, Fr, u^2/2g, zb')
+        legend('Flow depth h', 'Energy Head H', 'Froude number Fr', 'velocity head u^2/2g', 'bottom elevation zb')
+        title(sprintf('At time t=%g', t))
+        ylim([-0.2,1.5])
+        
+        if itstep== count*100
+            print('-djpeg','results\Timestep_'+ string(itstep),'-r250')
+            count = count +1;
+        end
 
-        % TODO: Plot energy head, Froude number
-        figure(3)
-        plot(grid.x(2:end-1), e)
-        xlabel('x')
-        ylabel('Energy Head')
-        title(sprintf('Energy Head at t=%g',t))
-        ylim([0,1])
-        drawnow
-
-        figure(4)
-        plot(grid.x(2:end-1), Fr)
-        xlabel('x')
-        ylabel('Fr')
-        title(sprintf('Froude number at t=%g',t))
-        %ylim([0,1])
-        drawnow
     end
 
 end

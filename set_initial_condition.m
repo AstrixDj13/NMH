@@ -2,7 +2,7 @@ function [ h, hu, hv, kst, zb ] = set_initial_condition( grid, h, hu, hv, kst, z
 %SET_INITIAL_CONDITION Set initial fields
 
 % TODO: Bottom elevation
- zb(:,:) = 0.01 * grid.x' * ones(size(grid.y));
+ zb(:,:) = 0.00001 * grid.x' * ones(size(grid.y));
 
 % TODO: Strickler coefficient
  kst(:,:) = 30;
